@@ -10,6 +10,7 @@ public class player : MonoBehaviour
     private cameraController cam;
     private Vector3 movementDir;
     private Vector3 desiredMovementDir;
+    private bool grounded;
     void Start()
     {
         cam = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<cameraController>();
@@ -18,7 +19,7 @@ public class player : MonoBehaviour
 
     void Update()
     {
-        movementDir = new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical"));
+        movementDir = new Vector3(Input.GetAxis("Horizontal") * force, 0, Input.GetAxis("Vertical") * force);
         desiredMovementDir = cam.YRotation() * movementDir;
         rb.AddForce(desiredMovementDir);
 
@@ -29,5 +30,17 @@ public class player : MonoBehaviour
             horizontalVelocity = horizontalVelocity.normalized * maxSpeed;
             rb.velocity = new Vector3(horizontalVelocity.x, rb.velocity.y, horizontalVelocity.z);
         }
+
+        if(Input.GetKeyDown(KeyCode.Space) && grounded) {
+            rb.AddForce(new Vector3(0, 250.0f, 0));
+        }
+    }
+
+    private void OnCollisionEnter(Collision other) {
+        grounded = true;
+    }
+
+    private void OnCollisionExit(Collision other) {
+        grounded = false;
     }
 }

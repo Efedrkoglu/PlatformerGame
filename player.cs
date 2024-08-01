@@ -7,12 +7,12 @@ public class player : MonoBehaviour
     private Rigidbody rb;
     public float force;
     public float maxSpeed;
-    private camera cam;
+    private cameraController cam;
     private Vector3 movementDir;
     private Vector3 desiredMovementDir;
     void Start()
     {
-        cam = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<camera>();
+        cam = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<cameraController>();
         rb = GetComponent<Rigidbody>();
     }
 

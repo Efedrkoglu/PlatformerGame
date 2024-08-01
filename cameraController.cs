@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class camera : MonoBehaviour
+public class cameraController : MonoBehaviour
 {
     [SerializeField] private Transform target;
     private Vector3 offset;

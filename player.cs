@@ -32,15 +32,12 @@ public class player : MonoBehaviour
         }
 
         if(Input.GetKeyDown(KeyCode.Space) && grounded) {
+            grounded = false;
             rb.AddForce(new Vector3(0, 250.0f, 0));
         }
     }
 
     private void OnCollisionEnter(Collision other) {
         grounded = true;
-    }
-
-    private void OnCollisionExit(Collision other) {
-        grounded = false;
     }
 }

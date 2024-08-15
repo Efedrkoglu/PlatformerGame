@@ -5,23 +5,25 @@ using UnityEngine;
 public class player : MonoBehaviour
 {
     private Rigidbody rb;
-    public float force;
-    public float maxSpeed;
+    [SerializeField] private float force;
+    [SerializeField] private float maxSpeed;
     private cameraController cam;
     private Vector3 movementDir;
     private Vector3 desiredMovementDir;
     private bool grounded;
+    private AudioSource audioSource;
     void Start()
     {
+        audioSource = GetComponent<AudioSource>();
         cam = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<cameraController>();
         rb = GetComponent<Rigidbody>();
     }
 
     void Update()
     {
-        movementDir = new Vector3(Input.GetAxis("Horizontal") * force, 0, Input.GetAxis("Vertical") * force);
+        movementDir = new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical"));
         desiredMovementDir = cam.YRotation() * movementDir;
-        rb.AddForce(desiredMovementDir);
+        rb.AddForce(desiredMovementDir * force * Time.deltaTime, ForceMode.VelocityChange);
 
         Vector3 horizontalVelocity = new Vector3(rb.velocity.x, 0, rb.velocity.z);
 
@@ -32,8 +34,9 @@ public class player : MonoBehaviour
         }
 
         if(Input.GetKeyDown(KeyCode.Space) && grounded) {
+            audioSource.Play();
             grounded = false;
-            rb.AddForce(new Vector3(0, 250.0f, 0));
+            rb.AddForce(new Vector3(0, 300.0f, 0));
         }
     }
 

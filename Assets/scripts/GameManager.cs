@@ -9,8 +9,19 @@ public class GameManager : MonoBehaviour
 {
     public static GameManager instance;
     private GameState gameState;
-    private string[] scenes;
-    private int currentSceneIndex;
+    private GameObject player;
+    private Transform checkpoint;
+    public delegate void EventHandler();
+    public event EventHandler LevelCompletedEvent;
+
+    private GameManager() {
+
+    }
+
+    private void CompleteLevel() {
+        LevelCompletedEvent?.Invoke();
+    } 
+
     void Awake() {
         if(instance == null) {
             instance = this;
@@ -25,55 +36,55 @@ public class GameManager : MonoBehaviour
 
     void Start()
     {
-        scenes = new string[SceneManager.sceneCountInBuildSettings];
-
-        for(int i = 0; i < scenes.Length; i++) {
-            string scenePath = SceneUtility.GetScenePathByBuildIndex(i);
-            scenes[i] = System.IO.Path.GetFileNameWithoutExtension(scenePath);
-        }
-        currentSceneIndex = 0;
+        
     }
 
     void Update()
     {
         switch(gameState) {
             case GameState.levelFinished:
-                LoadNextLevel();
+                CompleteLevel();
                 break;
             
             case GameState.playerDied:
-                RestartCurrentLevel();
+                if(checkpoint != null) {
+                    player.gameObject.SetActive(false);
+                    StartCoroutine(RespawnPlayer());
+                    gameState = GameState.ongoing;
+                }
                 break;
         }
     }
 
     void OnSceneLoaded(Scene scene, LoadSceneMode mode) {
-        this.gameState = GameState.ongoing;  
+        this.gameState = GameState.ongoing;
+        if(!SceneManager.GetActiveScene().name.Equals("MainMenu")) {
+            player = GameObject.FindGameObjectWithTag("Player");
+            checkpoint = GameObject.FindGameObjectWithTag("start").transform;
+        }
     }
 
     public void setGameState(GameState gameState) {
         this.gameState = gameState;
     }
 
-    private void LoadNextLevel() {
-        currentSceneIndex++;
-
-        if(currentSceneIndex == scenes.Length)
-            currentSceneIndex -= 1;
-        
-        SceneManager.LoadScene(scenes[currentSceneIndex]);
+    public void setCheckPoint(Transform checkpoint) {
+        this.checkpoint = checkpoint;
+        Debug.Log("Checkpoint set");
     }
 
-    private void RestartCurrentLevel() {
-        string currentSceneName = SceneManager.GetActiveScene().name;
-        SceneManager.LoadScene(currentSceneName);
+    private IEnumerator RespawnPlayer() {
+        yield return new WaitForSeconds(1.5f);
+        player.transform.position = checkpoint.position;
+        player.gameObject.SetActive(true);
+        player.gameObject.GetComponent<Rigidbody>().velocity = new Vector3(0, 0, 0);
     }
 }
 
 public enum GameState {
     ongoing,
     levelFinished,
-    playerDied
+    playerDied,
 }
 
 

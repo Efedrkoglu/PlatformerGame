@@ -6,7 +6,8 @@ public class trap_spike_wall : trap
 {
     private Animator animator;
     [SerializeField] private float animationSpeed = 1f;
-    private void Start() {
+    protected override void Start() {
+        base.Start();
         animator = GetComponent<Animator>();
         animator.speed = animationSpeed;
     }
@@ -17,6 +18,8 @@ public class trap_spike_wall : trap
 
     private void OnTriggerEnter(Collider other) {
         if(other.gameObject.CompareTag("Player")) {
+            PlayPopSound();
+            Instantiate(base.explosion, other.gameObject.transform.position, Quaternion.identity);
             GameManager.instance.setGameState(GameState.playerDied);
         }
     }

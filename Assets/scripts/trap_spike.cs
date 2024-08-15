@@ -7,13 +7,13 @@ public class trap_spike : trap
     [SerializeField] private float interval;
     private Animator animator;
     private float time = 0;
-    // Start is called before the first frame update
-    void Start()
+    
+    protected override void Start()
     {
+        base.Start();
         animator = GetComponent<Animator>();
     }
 
-    // Update is called once per frame
     void Update()
     {
         if(time <= interval) {

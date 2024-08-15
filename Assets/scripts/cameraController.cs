@@ -13,8 +13,7 @@ public class cameraController : MonoBehaviour
     [SerializeField] private float camSensitivity;
     void Start()
     {
-        Cursor.visible = false;
-        Cursor.lockState = CursorLockMode.Locked;
+        
         offset = target.position - transform.position;
     }
 
